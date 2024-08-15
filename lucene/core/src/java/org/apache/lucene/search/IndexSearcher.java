@@ -631,8 +631,13 @@ public class IndexSearcher {
   public <C extends Collector, T> T search(Query query, CollectorManager<C, T> collectorManager)
       throws IOException {
     final LeafSlice[] leafSlices = getSlices();
-    final List<C> collectors = new ArrayList<>(leafSlices.length);
     final C firstCollector = collectorManager.newCollector();
+    final List<C> collectors;
+    if (leafSlices.length == 0) {
+      collectors = Collections.singletonList(firstCollector);
+    } else {
+      collectors = new ArrayList<>(leafSlices.length);
+    }
     query = rewrite(query, firstCollector.scoreMode().needsScores());
     final Weight weight = createWeight(query, firstCollector.scoreMode(), 1);
     return search(weight, collectorManager, firstCollector, collectors, leafSlices);
@@ -649,7 +654,7 @@ public class IndexSearcher {
       // there are no segments, nothing to offload to the executor, but we do need to call reduce to
       // create some kind of empty result
       assert leafContexts.isEmpty();
-      return collectorManager.reduce(Collections.singletonList(firstCollector));
+      return collectorManager.reduce(collectors);
     } else {
       collectors.add(firstCollector);
       final ScoreMode scoreMode = firstCollector.scoreMode();
