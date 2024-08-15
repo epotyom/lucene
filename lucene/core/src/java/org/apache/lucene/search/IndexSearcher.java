@@ -641,8 +641,8 @@ public class IndexSearcher {
       return collectorManager.reduce(Collections.singletonList(firstCollector));
     } else {
       final List<C> collectors = new ArrayList<>(leafSlices.length);
-      collectors.add(firstCollector);
       final ScoreMode scoreMode = firstCollector.scoreMode();
+      collectors.add(firstCollector);
       for (int i = 1; i < leafSlices.length; ++i) {
         final C collector = collectorManager.newCollector();
         collectors.add(collector);
