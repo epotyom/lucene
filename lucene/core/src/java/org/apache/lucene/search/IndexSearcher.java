@@ -640,8 +640,8 @@ public class IndexSearcher {
       assert leafContexts.isEmpty();
       return collectorManager.reduce(Collections.singletonList(firstCollector));
     } else {
-      final List<C> collectors = new ArrayList<>(leafSlices.length);
       final Weight weight = createWeight(query, firstCollector.scoreMode(), 1);
+      final List<C> collectors = new ArrayList<>(leafSlices.length);
       collectors.add(firstCollector);
       final ScoreMode scoreMode = firstCollector.scoreMode();
       for (int i = 1; i < leafSlices.length; ++i) {
