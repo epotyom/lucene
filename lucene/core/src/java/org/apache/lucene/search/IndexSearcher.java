@@ -641,9 +641,9 @@ public class IndexSearcher {
       assert leafContexts.isEmpty();
       return collectorManager.reduce(Collections.singletonList(firstCollector));
     } else {
-      final List<C> collectors = new LinkedList<>();
-      collectors.add(firstCollector);
+      final List<C> collectors = new ArrayList<>(1);
       final Weight weight = createWeight(query, firstCollector.scoreMode(), 1);
+      collectors.add(firstCollector);
       final ScoreMode scoreMode = firstCollector.scoreMode();
       for (int i = 1; i < leafSlices.length; ++i) {
         final C collector = collectorManager.newCollector();
