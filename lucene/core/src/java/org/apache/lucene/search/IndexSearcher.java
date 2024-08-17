@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -640,9 +641,9 @@ public class IndexSearcher {
       assert leafContexts.isEmpty();
       return collectorManager.reduce(Collections.singletonList(firstCollector));
     } else {
-      final List<C> collectors = new ArrayList<>(leafSlices.length);
-      final Weight weight = createWeight(query, firstCollector.scoreMode(), 1);
+      final List<C> collectors = new LinkedList<>();
       collectors.add(firstCollector);
+      final Weight weight = createWeight(query, firstCollector.scoreMode(), 1);
       final ScoreMode scoreMode = firstCollector.scoreMode();
       for (int i = 1; i < leafSlices.length; ++i) {
         final C collector = collectorManager.newCollector();
