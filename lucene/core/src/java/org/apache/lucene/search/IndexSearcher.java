@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -629,6 +628,7 @@ public class IndexSearcher {
    * @see CollectorManager
    * @lucene.experimental
    */
+  @SuppressWarnings("unchecked")
   public <C extends Collector, T> T search(Query query, CollectorManager<C, T> collectorManager)
       throws IOException {
     final LeafSlice[] leafSlices = getSlices();
@@ -641,13 +641,13 @@ public class IndexSearcher {
       assert leafContexts.isEmpty();
       return collectorManager.reduce(Collections.singletonList(firstCollector));
     } else {
-      final List<C> collectors = new ArrayList<>(1);
+      Object[] collectors = new Object[leafSlices.length];
+      collectors[0] = firstCollector;
       final Weight weight = createWeight(query, firstCollector.scoreMode(), 1);
-      collectors.add(firstCollector);
       final ScoreMode scoreMode = firstCollector.scoreMode();
       for (int i = 1; i < leafSlices.length; ++i) {
         final C collector = collectorManager.newCollector();
-        collectors.add(collector);
+        collectors[i] = collector;
         if (scoreMode != collector.scoreMode()) {
           throw new IllegalStateException(
               "CollectorManager does not always produce collectors with the same score mode");
@@ -656,7 +656,7 @@ public class IndexSearcher {
       final List<Callable<C>> listTasks = new ArrayList<>(leafSlices.length);
       for (int i = 0; i < leafSlices.length; ++i) {
         final LeafReaderContext[] leaves = leafSlices[i].leaves;
-        final C collector = collectors.get(i);
+        final C collector = (C) collectors[i];
         listTasks.add(
             () -> {
               search(Arrays.asList(leaves), weight, collector);
