@@ -644,9 +644,12 @@ public class IndexSearcher {
       Object[] arr = new Object[leafSlices.length];
       arr[0] = firstCollector;
       final Weight weight = createWeight(query, firstCollector.scoreMode(), 1);
+      final List<C> collectors = new ArrayList<>(leafSlices.length);
+      collectors.add(firstCollector);
       final ScoreMode scoreMode = firstCollector.scoreMode();
       for (int i = 1; i < leafSlices.length; ++i) {
         final C collector = collectorManager.newCollector();
+        collectors.add(collector);
         arr[i] = collector;
         if (scoreMode != collector.scoreMode()) {
           throw new IllegalStateException(
