@@ -640,13 +640,16 @@ public class IndexSearcher {
       assert leafContexts.isEmpty();
       return collectorManager.reduce(Collections.singletonList(firstCollector));
     } else {
-      final List<C> collectors = new ArrayList<>(leafSlices.length);
+      final List<C> collectors1 = new ArrayList<>(leafSlices.length);
+      collectors1.add(firstCollector);
       final Weight weight = createWeight(query, firstCollector.scoreMode(), 1);
-      collectors.add(firstCollector);
+      final List<C> collectors2 = new ArrayList<>(leafSlices.length);
+      collectors2.add(firstCollector);
       final ScoreMode scoreMode = firstCollector.scoreMode();
       for (int i = 1; i < leafSlices.length; ++i) {
         final C collector = collectorManager.newCollector();
-        collectors.add(collector);
+        collectors1.add(collector);
+        collectors2.add(collector);
         if (scoreMode != collector.scoreMode()) {
           throw new IllegalStateException(
               "CollectorManager does not always produce collectors with the same score mode");
@@ -655,7 +658,7 @@ public class IndexSearcher {
       final List<Callable<C>> listTasks = new ArrayList<>(leafSlices.length);
       for (int i = 0; i < leafSlices.length; ++i) {
         final LeafReaderContext[] leaves = leafSlices[i].leaves;
-        final C collector = collectors.get(i);
+        final C collector = collectors1.get(i);
         listTasks.add(
             () -> {
               search(Arrays.asList(leaves), weight, collector);
