@@ -56,7 +56,7 @@ class OverlappingLongRangeFacetCutter extends LongRangeFacetCutter {
   }
 
   /**
-   * TODO: it's identical to private OverlappingLongRangeCounter#buildElementaryIntervals, let's
+   * TODO [added]: it's identical to private OverlappingLongRangeCounter#buildElementaryIntervals, let's
    * dedup.
    */
   @Override
@@ -159,7 +159,7 @@ class OverlappingLongRangeFacetCutter extends LongRangeFacetCutter {
   }
 
   /**
-   * TODO: dedup OverlappingMultivaluedRangeLeafFacetCutter and
+   * TODO [added]: dedup OverlappingMultivaluedRangeLeafFacetCutter and
    * OverlappingSingleValuedRangeLeafFacetCutter code - they are identical but they extend different
    * base classes.
    */
@@ -235,7 +235,7 @@ class OverlappingLongRangeFacetCutter extends LongRangeFacetCutter {
 
     @Override
     void maybeRollUp(IntervalTracker rollUpInto) {
-      // TODO: for single valued we can rollup after collecting all documents, e.g. in reduce
+      // TODO [added to the plan]: for single valued we can rollup after collecting all documents, e.g. in reduce
       // method. Maybe we can use FacetCutter rollup methods to handle this case too?
       elementaryIntervalUpto = 0;
       rollupSingleValued(elementaryIntervalRoot);

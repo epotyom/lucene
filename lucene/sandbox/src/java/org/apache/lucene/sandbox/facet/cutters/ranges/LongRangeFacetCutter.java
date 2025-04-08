@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.lucene.facet.MultiLongValues;
 import org.apache.lucene.facet.MultiLongValuesSource;
 import org.apache.lucene.facet.range.LongRange;
+import org.apache.lucene.index.DocValuesSkipper;
 import org.apache.lucene.sandbox.facet.cutters.FacetCutter;
 import org.apache.lucene.sandbox.facet.cutters.LeafFacetCutter;
 import org.apache.lucene.search.LongValues;
@@ -31,7 +32,7 @@ import org.apache.lucene.search.LongValuesSource;
 /**
  * {@link FacetCutter} for ranges of long values. It's based on LongRangeCounter class.
  *
- * <p>TODO: support "total count" facet ordinal - to be able to return {@link
+ * <p>TODO [added to the plan]: support "total count" facet ordinal - to be able to return {@link
  * org.apache.lucene.facet.FacetResult#value}
  *
  * @lucene.experimental
@@ -40,7 +41,7 @@ public abstract class LongRangeFacetCutter implements FacetCutter {
 
   final MultiLongValuesSource valuesSource;
 
-  // TODO: refactor - weird that we have both multi and single here.
+  // TODO [added to the plan]: refactor - weird that we have both multi and single here.
   final LongValuesSource singleValues;
   final LongRangeAndPos[] sortedRanges;
 
@@ -130,7 +131,7 @@ public abstract class LongRangeFacetCutter implements FacetCutter {
     }
 
     // Copy before sorting so we don't mess with the caller's original ranges:
-    // TODO: We're going to do this again in the constructor. Can't we come up with a clever way to
+    // TODO [added to the plan]: We're going to do this again in the constructor. Can't we come up with a clever way to
     // avoid doing it twice?
     LongRange[] sortedRanges = new LongRange[ranges.length];
     System.arraycopy(ranges, 0, sortedRanges, 0, ranges.length);
@@ -155,7 +156,7 @@ public abstract class LongRangeFacetCutter implements FacetCutter {
     final int[] pos;
     final IntervalTracker elementaryIntervalTracker;
 
-    // TODO: we need it only for overlapping ranges, should not handle it in advanceExact for
+    // TODO [added to the plan]: we need it only for overlapping ranges, should not handle it in advanceExact for
     // exclusive ranges.
     IntervalTracker requestedIntervalTracker;
 
@@ -219,7 +220,7 @@ public abstract class LongRangeFacetCutter implements FacetCutter {
         if (lo == boundaries.length) {
           // we've already counted the last elementary interval. If so, there's nothing
           // else to count for this doc
-          // TODO: does it make sense to return something else?
+          // TODO[added to the plan]: does it make sense to return something else?
           return lastIntervalSeen;
         }
       }
@@ -301,6 +302,112 @@ public abstract class LongRangeFacetCutter implements FacetCutter {
     void maybeRollUp(IntervalTracker rollUpInto) {}
   }
 
+
+  abstract static class LongRangeSingleValuedWithSkipperLeafFacetCutter implements LeafFacetCutter {
+    private final LongValues longValues;
+    private final long[] boundaries;
+    private final DocValuesSkipper skipper;
+    final int[] pos;
+    int elementaryIntervalOrd;
+    /** Max doc ID (inclusive) up to which all docs values may map to the same elementary range. */
+    private int upToInclusive = -1;
+
+    /** Whether all docs up to {@link #upToInclusive} values map to the same bucket. */
+    private boolean upToSameBucket;
+
+    IntervalTracker requestedIntervalTracker;
+
+    LongRangeSingleValuedWithSkipperLeafFacetCutter(LongValues longValues, long[] boundaries, int[] pos, DocValuesSkipper skipper) {
+      this.longValues = longValues;
+      this.boundaries = boundaries;
+      this.pos = pos;
+      this.skipper = skipper;
+    }
+
+    private void advanceSkipper(int doc) throws IOException {
+      if (doc > skipper.maxDocID(0)) {
+        skipper.advance(doc);
+      }
+      upToSameBucket = false;
+
+      if (skipper.minDocID(0) > doc) {
+        // Corner case which happens if `doc` doesn't have a value and is between two intervals of
+        // the doc-value skip index.
+        upToInclusive = skipper.minDocID(0) - 1;
+        return;
+      }
+
+      upToInclusive = skipper.maxDocID(0);
+
+      // Now find the highest level where all docs map to the same bucket.
+      for (int level = 0; level < skipper.numLevels(); ++level) {
+        int minElementaryInterval = processValue(skipper.minValue(level));
+        int maxElementaryInterval = processValue(skipper.maxValue(level));
+
+        if (minElementaryInterval == maxElementaryInterval) {
+          // All docs at this level have a value, and all values map to the same bucket.
+          upToInclusive = skipper.maxDocID(level);
+          upToSameBucket = true;
+          elementaryIntervalOrd = minElementaryInterval;
+          maybeRollUp(requestedIntervalTracker);
+          if (requestedIntervalTracker != null) {
+            requestedIntervalTracker.freeze();
+          }
+        } else {
+          break;
+        }
+      }
+    }
+
+    @Override
+    public boolean advanceExact(int doc) throws IOException {
+      if (doc > upToInclusive) {
+        advanceSkipper(doc);
+      }
+      if (longValues.advanceExact(doc) == false) {
+        return false;
+      }
+      if (upToSameBucket == false) {
+        if (requestedIntervalTracker != null) {
+          requestedIntervalTracker.clear();
+        }
+        elementaryIntervalOrd = processValue(longValues.longValue());
+        maybeRollUp(requestedIntervalTracker);
+        if (requestedIntervalTracker != null) {
+          requestedIntervalTracker.freeze();
+        }
+      }
+
+      return true;
+    }
+
+    // Returns the value of the interval v belongs or lastIntervalSeen
+    // if no processing is done, it returns the lastIntervalSeen
+    private int processValue(long v) {
+      int lo = 0, hi = boundaries.length - 1;
+
+      int lowerBound = lo;
+
+      while (true) {
+        int mid = (lo + hi) >>> 1;
+        if (v <= boundaries[mid]) {
+          if (mid == lowerBound) {
+            return mid;
+          } else {
+            hi = mid - 1;
+          }
+        } else if (v > boundaries[mid + 1]) {
+          lo = mid + 1;
+        } else {
+          return mid + 1;
+        }
+      }
+    }
+
+    void maybeRollUp(IntervalTracker rollUpInto) {}
+  }
+
+
   record LongRangeAndPos(LongRange range, int pos) {
     @Override
     public String toString() {
@@ -311,7 +418,7 @@ public abstract class LongRangeFacetCutter implements FacetCutter {
   /**
    * Similar to InclusiveRange from LongRangeCounter.
    *
-   * <p>TODO: dedup
+   * <p>TODO[added to the plan]: dedup
    */
   record InclusiveRange(long start, long end) {
 

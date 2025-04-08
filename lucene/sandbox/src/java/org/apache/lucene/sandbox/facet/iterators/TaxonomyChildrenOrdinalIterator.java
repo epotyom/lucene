@@ -27,7 +27,7 @@ import org.apache.lucene.sandbox.facet.labels.LabelToOrd;
  */
 public final class TaxonomyChildrenOrdinalIterator implements OrdinalIterator {
 
-  // TODO: do we want to have something like ChainOrdinalIterators to chain multiple iterators?
+  // TODO [added to the plan]: do we want to have something like ChainOrdinalIterators to chain multiple iterators?
   //  Or are we fine with chaining them manually every time?
   private final OrdinalIterator sourceOrds;
   private final ParallelTaxonomyArrays.IntArray parents;
@@ -44,7 +44,7 @@ public final class TaxonomyChildrenOrdinalIterator implements OrdinalIterator {
 
   @Override
   public int nextOrd() throws IOException {
-    // TODO: in some cases it might be faster to traverse children of selected parent
+    // TODO [added to the plan]: in some cases it might be faster to traverse children of selected parent
     // (children/siblings IntArrays) and check if source ords contain them. We can think of some
     // heuristics to decide which approach to use on case by case basis? There is similar comment in
     // TaxonomyFacets#getTopChildrenForPath

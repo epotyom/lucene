@@ -22,12 +22,12 @@ import org.apache.lucene.facet.taxonomy.FacetLabel;
 /**
  * Ordinal to label mapping interface.
  *
- * <p>TODO: move FacetLabel out of taxonomy folder to use it for any facets, not just taxonomy?
+ * <p>TODO [added to the plan]: move FacetLabel out of taxonomy folder to use it for any facets, not just taxonomy?
  *
  * @lucene.experimental
  */
 public interface OrdToLabel {
-  /** get label of one ord TODO: what do we return when ordinal is not valid? null? */
+  /** get label of one ord TODO [added to the plan]: what do we return when ordinal is not valid? null? */
   FacetLabel getLabel(int ordinal) throws IOException;
 
   /** get labels for multiple ords */

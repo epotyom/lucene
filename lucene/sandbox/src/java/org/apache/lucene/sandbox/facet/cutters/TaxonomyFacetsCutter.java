@@ -97,13 +97,13 @@ public final class TaxonomyFacetsCutter implements FacetCutter {
         DocValues.getSortedNumeric(context.reader(), indexFieldName);
     // DocValues.getSortedNumeric never returns null
     assert multiValued != null;
-    // TODO: if multiValued is emptySortedNumeric we can throw CollectionTerminatedException
+    // TODO [added to the plan]: if multiValued is emptySortedNumeric we can throw CollectionTerminatedException
     //       in FacetFieldLeafCollector and save some CPU cycles.
     TaxonomyLeafFacetCutterMultiValue leafCutter =
         new TaxonomyLeafFacetCutterMultiValue(multiValued);
     return leafCutter;
 
-    // TODO: does unwrapping Single valued make things any faster? We still need to wrap it into
+    // TODO [added tot he plan]: does unwrapping Single valued make things any faster? We still need to wrap it into
     //       LeafFacetCutter
     // NumericDocValues singleValued = DocValues.unwrapSingleton(multiValued);
   }

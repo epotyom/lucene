@@ -58,7 +58,7 @@ public final class DoubleRangeFacetCutter implements FacetCutter {
       multiLongValuesSource = multiDoubleValuesSource.toSortableMultiLongValuesSource();
     }
     LongRange[] longRanges = mapDoubleRangesToSortableLong(doubleRanges);
-    // TODO: instead of relying on either single value source or multi value source to be null, we
+    // TODO [added to the plan]: instead of relying on either single value source or multi value source to be null, we
     // should create different factory methods for single and multi valued versions and use the
     // right one
     this.longRangeFacetCutter =
@@ -71,7 +71,7 @@ public final class DoubleRangeFacetCutter implements FacetCutter {
     return longRangeFacetCutter.createLeafCutter(context);
   }
 
-  // TODO: it is exactly the same as DoubleRangeFacetCounts#getLongRanges (protected), we should
+  // TODO [added to the plan]: it is exactly the same as DoubleRangeFacetCounts#getLongRanges (protected), we should
   // dedup
   private LongRange[] mapDoubleRangesToSortableLong(DoubleRange[] doubleRanges) {
     LongRange[] longRanges = new LongRange[doubleRanges.length];

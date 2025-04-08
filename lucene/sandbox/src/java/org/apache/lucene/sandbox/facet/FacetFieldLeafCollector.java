@@ -47,7 +47,7 @@ final class FacetFieldLeafCollector implements LeafCollector {
 
   @Override
   public void setScorer(Scorable scorer) throws IOException {
-    // TODO: see comment in FacetFieldCollector#scoreMode
+    // TODO [added to the plan]: see comment in FacetFieldCollector#scoreMode
   }
 
   @Override
@@ -68,7 +68,7 @@ final class FacetFieldLeafCollector implements LeafCollector {
 
   @Override
   public DocIdSetIterator competitiveIterator() throws IOException {
-    // TODO: any ideas?
+    // TODO [added to the plan]: any ideas?
     //  1. Docs that have values for the index field we about to facet on
     //  2. TK
     return LeafCollector.super.competitiveIterator();

@@ -46,10 +46,10 @@ public final class TopnOrdinalIterator<T extends Comparable<T>> implements Ordin
 
   private void getTopN() throws IOException {
     assert result == null;
-    // TODO: current taxonomy implementations limit queue size by taxo reader size too, but it
+    // TODO [added to the plan]: current taxonomy implementations limit queue size by taxo reader size too, but it
     //  probably doesn't make sense for large enough taxonomy indexes?
     //  e.g. TopOrdAndIntQueue q = new TopComparableQueue(Math.min(taxoReader.getSize(), topN));
-    // TODO: create queue lazily - skip if first nextOrd is NO_MORE_ORDS ?
+    // TODO [added to the plan]: create queue lazily - skip if first nextOrd is NO_MORE_ORDS ?
     TopComparableQueue<T> queue = new TopComparableQueue<>(topN);
     OrdComparablePair<T> reuse = null;
     for (int ord = sourceOrds.nextOrd(); ord != NO_MORE_ORDS; ord = sourceOrds.nextOrd()) {

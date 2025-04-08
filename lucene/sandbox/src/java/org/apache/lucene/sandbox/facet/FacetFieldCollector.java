@@ -47,7 +47,7 @@ public final class FacetFieldCollector implements Collector {
 
   @Override
   public ScoreMode scoreMode() {
-    // TODO: Some FacetRecorders might need scores, e.g. to get associated numeric values, see for
+    // TODO [added to plan]: Some FacetRecorders might need scores, e.g. to get associated numeric values, see for
     // example TaxonomyFacetFloatAssociations. Not sure if anyone actually uses it, because
     // FacetsCollectorManager creates FacetsCollector with keepScores: false. But if someone needs
     // it, we can add boolean needScores method to FacetRecorder interface, return

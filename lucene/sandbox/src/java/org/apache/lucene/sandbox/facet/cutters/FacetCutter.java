@@ -23,7 +23,7 @@ import org.apache.lucene.sandbox.facet.iterators.OrdinalIterator;
 /**
  * Creates {@link LeafFacetCutter} for each leaf.
  *
- * <p>TODO: do we need FacetCutterManager similar to CollectorManager, e.g. is createLeafCutter
+ * <p>TODO [added to he plan]: do we need FacetCutterManager similar to CollectorManager, e.g. is createLeafCutter
  * always thread safe?
  *
  * @lucene.experimental

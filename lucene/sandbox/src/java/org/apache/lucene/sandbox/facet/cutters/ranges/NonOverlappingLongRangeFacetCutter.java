@@ -37,7 +37,7 @@ class NonOverlappingLongRangeFacetCutter extends LongRangeFacetCutter {
   }
 
   /**
-   * TODO: it's identical to private ExclusiveLongRangeCounter#buildElementaryIntervals, let's
+   * TODO [added to the plan]: it's identical to private ExclusiveLongRangeCounter#buildElementaryIntervals, let's
    * dedup.
    */
   @Override
@@ -78,7 +78,7 @@ class NonOverlappingLongRangeFacetCutter extends LongRangeFacetCutter {
   }
 
   /**
-   * TODO: dedup NonOverlappingLongRangeMultiValueLeafFacetCutter and
+   * TODO [added to the plan]: dedup NonOverlappingLongRangeMultiValueLeafFacetCutter and
    * NonOverlappingLongRangeSingleValueLeafFacetCutter code - they are similar but they extend
    * different base classes.
    */
@@ -109,6 +109,24 @@ class NonOverlappingLongRangeFacetCutter extends LongRangeFacetCutter {
       extends LongRangeSingleValuedLeafFacetCutter {
     NonOverlappingLongRangeSingleValueLeafFacetCutter(
         LongValues longValues, long[] boundaries, int[] pos) {
+      super(longValues, boundaries, pos);
+    }
+
+    @Override
+    public int nextOrd() throws IOException {
+      if (elementaryIntervalOrd == NO_MORE_ORDS) {
+        return NO_MORE_ORDS;
+      }
+      int result = pos[elementaryIntervalOrd];
+      elementaryIntervalOrd = NO_MORE_ORDS;
+      return result != SKIP_INTERVAL_POSITION ? result : NO_MORE_ORDS;
+    }
+  }
+
+  static class NonOverlappingLongRangeSingleValueWithSkipperLeafFacetCutter
+          extends LongRangeSingleValuedLeafFacetCutter {
+    NonOverlappingLongRangeSingleValueLeafFacetCutter(
+            LongValues longValues, long[] boundaries, int[] pos) {
       super(longValues, boundaries, pos);
     }
 

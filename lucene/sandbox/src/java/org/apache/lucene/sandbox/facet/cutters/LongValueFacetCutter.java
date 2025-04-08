@@ -32,15 +32,15 @@ import org.apache.lucene.sandbox.facet.labels.OrdToLabel;
 /**
  * {@link FacetCutter} and {@link OrdToLabel} for distinct long values.
  *
- * <p>TODO: This class is quite inefficient. Will optimise later.
+ * <p>TODO [added to the plan]: This class is quite inefficient. Will optimise later.
  *
- * <p>TODO: add support for other value sources e.g: LongValues
+ * <p>TODO [added to the plan]: add support for other value sources e.g: LongValues
  *
  * @lucene.experimental
  */
 public final class LongValueFacetCutter implements FacetCutter, OrdToLabel {
   private final String field;
-  // TODO: consider alternatives if this is a bottleneck
+  // TODO [ignored in the plan]: consider alternatives if this is a bottleneck
   private final LongIntHashMapSyncCompute valueToOrdMap;
   private IntLongHashMap ordToValueMap;
   private final AtomicInteger maxOrdinal;
@@ -112,7 +112,7 @@ public final class LongValueFacetCutter implements FacetCutter, OrdToLabel {
   /**
    * Get value by ordinal. Should only be called after collection phase.
    *
-   * <p>TODO: we need it to tie break sort by value. Alternatively we can sort by label (then we
+   * <p>TODO [added to the plan]: we need it to tie break sort by value. Alternatively we can sort by label (then we
    * don't need this method), but we would have to convert FacetLabel to "long" to have the same
    * order... Overall, it is probably not important to tie break by value, and we can tie break by
    * ord same as for other facets; but for now we don't want to change results order just in case.
@@ -121,7 +121,7 @@ public final class LongValueFacetCutter implements FacetCutter, OrdToLabel {
    * @return long value
    */
   public long getValue(int ordinal) {
-    // TODO: do we want to create #finish method that called by #reduce to build the map?
+    // TODO [ignore]: do we want to create #finish method that called by #reduce to build the map?
     if (ordToValueMap == null) {
       buildOrdToValueMap();
     }

@@ -36,7 +36,7 @@ public final class CandidateSetOrdinalIterator implements OrdinalIterator {
   public CandidateSetOrdinalIterator(
       FacetRecorder facetRecorder, FacetLabel[] candidateLabels, LabelToOrd labelToOrd)
       throws IOException {
-    // TODO: if candidates size >> number of ordinals in facetRecorder, it is more efficient to
+    // TODO [added to the plan]: if candidates size >> number of ordinals in facetRecorder, it is more efficient to
     // iterate ordinals from FacetRecorder, and check if candidates contain them
     if (facetRecorder.isEmpty()) {
       // Getting ordinals for labels might be expensive, e.g. it requires reading index for taxonomy

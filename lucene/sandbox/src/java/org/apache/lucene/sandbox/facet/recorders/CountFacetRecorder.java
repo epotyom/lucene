@@ -33,7 +33,7 @@ import org.apache.lucene.sandbox.facet.iterators.OrdinalIterator;
 /**
  * {@link FacetRecorder} to count facets.
  *
- * <p>TODO: add an option to keep counts in an array, to improve performance for facets with small
+ * <p>TODO [added to the plan]: add an option to keep counts in an array, to improve performance for facets with small
  * number of ordinals e.g. range facets. Options: - {@link LeafFacetCutter} can inform {@link
  * LeafFacetRecorder} about expected number of facet ordinals ({@link
  * org.apache.lucene.sandbox.facet.FacetFieldCollector} can orchestrate that). If expeted facet ord
@@ -41,12 +41,12 @@ import org.apache.lucene.sandbox.facet.iterators.OrdinalIterator;
  * rest - in a map; the limit can also be provided in a constructor? It is similar to what
  * LongValuesFacetCounts does today.
  *
- * <p>TODO: We can also consider collecting 2 (3, 4, ..., can be parametrizes) slices to a single
+ * <p>TODO [added to the plan]: We can also consider collecting 2 (3, 4, ..., can be parametrizes) slices to a single
  * sync map which can reduce thread contention compared to single sync map for all slices; at the
  * same time there will be less work for reduce method. So far reduce wasn't a bottleneck for us,
  * but it is definitely not free.
  *
- * <p>TODO: If we come back to some for of synchronized count maps, we should be more careful what
+ * <p>TODO [added to the plan]: If we come back to some for of synchronized count maps, we should be more careful what
  * we acquire locks for - we used to lock addTo method itself, but it could be faster if we only
  * synchronized after computing the key's hash; or we can lock the entire map only if we need to
  * insert key, and lock single key otherwise?
@@ -70,7 +70,7 @@ public final class CountFacetRecorder implements FacetRecorder {
 
   @Override
   public LeafFacetRecorder getLeafRecorder(LeafReaderContext context) {
-    // TODO: we are planning to do some experiments with how hash maps are assigned to leaf or slice
+    // TODO [added to the plan]: we are planning to do some experiments with how hash maps are assigned to leaf or slice
     // recorders, see other TODOs in this class. When we make the decision, we can collect
     // leaf/slice recorders themselves, not the hashmaps?
     IntIntHashMap leafValues = new IntIntHashMap();
@@ -80,7 +80,7 @@ public final class CountFacetRecorder implements FacetRecorder {
 
   @Override
   public OrdinalIterator recordedOrds() {
-    // TODO: even if this is called before collection started, we want it to use results from the
+    // TODO [added to the plan]: even if this is called before collection started, we want it to use results from the
     // time when nextOrd is first called. Does ordIterator work like that? I've run some tests that
     // confirmed expected behavior, but I'm not sure IntIntMap guarantees that. We should at least
     // add a unit test to make sure it always work that way.

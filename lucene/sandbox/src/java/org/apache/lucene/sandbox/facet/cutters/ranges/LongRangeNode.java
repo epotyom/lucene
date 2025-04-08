@@ -21,7 +21,7 @@ import org.apache.lucene.internal.hppc.IntArrayList;
 /**
  * Holds one node of the segment tree.
  *
- * <p>TODO: dedup existing LongRangeNode.
+ * <p>TODO [added to the plan]: dedup existing LongRangeNode.
  */
 final class LongRangeNode {
   final LongRangeNode left;
