@@ -25,7 +25,7 @@ import org.apache.lucene.sandbox.facet.iterators.OrdinalIterator;
 /**
  * Record data for each facet of each doc.
  *
- * <p>TODO: In the next iteration we can add an extra layer between FacetRecorder and
+ * <p>TODO [added to the plan]: In the next iteration we can add an extra layer between FacetRecorder and
  * LeafFacetRecorder, e.g. SliceFacetRecorder. The new layer will be created per {@link
  * org.apache.lucene.search.Collector}, which means that collecting of multiple leafs (segments)
  * within a slice is sequential and can be done to a single non-sync map to improve performance and

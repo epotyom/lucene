@@ -116,7 +116,7 @@ public final class CountFacetRecorder implements FacetRecorder {
       }
     }
     if (firstElement) {
-      // TODO: do we need empty map by default?
+      // TODO [added to the plan]: do we need empty map by default?
       values = new IntIntHashMap();
     }
 

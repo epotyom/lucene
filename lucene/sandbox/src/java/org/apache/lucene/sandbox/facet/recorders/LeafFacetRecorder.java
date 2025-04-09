@@ -26,7 +26,7 @@ import java.io.IOException;
 public interface LeafFacetRecorder {
 
   /**
-   * TODO: Rename: collect? accumulate?
+   * TODO [added to the plan]: Rename: collect? accumulate?
    *
    * @param docId document ID
    * @param facetOrd facet ordinal

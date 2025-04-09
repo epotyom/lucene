@@ -44,7 +44,7 @@ public final class DrillSidewaysFacetOrchestrator {
 
   public DrillSidewaysFacetOrchestrator addDrillSidewaysBuilder(
       String dim, FacetBuilder facetBuilder) {
-    // TODO: this looks fragile as it duplicates index assignment logic from DrillDownQuery.
+    // TODO [added to the plan]: this looks fragile as it duplicates index assignment logic from DrillDownQuery.
     //       Instead we can change DrillSideways API to accept a dimension (String) to collector
     //       manager map instead of a list so that we can be sure that we use the right
     //       collector for the right dimension.

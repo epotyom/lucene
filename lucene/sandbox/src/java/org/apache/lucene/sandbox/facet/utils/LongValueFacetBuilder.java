@@ -49,7 +49,7 @@ public final class LongValueFacetBuilder extends BaseFacetBuilder<LongValueFacet
 
   @Override
   Number getOverallValue() {
-    // TODO: we don't collect overall value anywhere, we should either change cutter to return ord
+    // TODO [added to the plan]: we don't collect overall value anywhere, we should either change cutter to return ord
     // that corresponse to "and value",
     //       or change CountRecorder itself to collect overall value when needed.
     return -1;

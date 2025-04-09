@@ -87,7 +87,7 @@ abstract class BaseFacetBuilder<C extends BaseFacetBuilder<C>> extends FacetBuil
 
   /** Get value for {@link LabelAndValue}. */
   final Number getValue(int facetOrd) {
-    // TODO: support other aggregations
+    // TODO [added to the plan]: support other aggregations
     return countRecorder.getCount(facetOrd);
   }
 
@@ -97,7 +97,7 @@ abstract class BaseFacetBuilder<C extends BaseFacetBuilder<C>> extends FacetBuil
   @Override
   FacetBuilder initOrReuseCollector(FacetBuilder similar) {
     // share recorders between FacetBuilders that share CollectorManager
-    // TODO: add support for other aggregation types, e.g. float/int associations
+    // TODO [added to the plan]: add support for other aggregation types, e.g. float/int associations
     //       and long aggregations
     if (similar instanceof BaseFacetBuilder<?> castedSimilar) {
       this.countRecorder = castedSimilar.countRecorder;

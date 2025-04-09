@@ -34,7 +34,7 @@ import org.apache.lucene.search.LongValuesSource;
 /**
  * {@link FacetRecorder} that computes multiple long aggregations per facet.
  *
- * <p>TODO: [premature optimization idea] if instead of one array we keep aggregations in two
+ * <p>TODO: [added to the plan][premature optimization idea] if instead of one array we keep aggregations in two
  * LongVector (one for MAX aggregation and one for SUM) we can benefit from SIMD?
  *
  * @lucene.experimental
@@ -107,7 +107,7 @@ public final class LongAggregationsFacetRecorder implements FacetRecorder {
       }
     }
     if (firstElement) {
-      // TODO: do we need empty map by default?
+      // TODO [added to the plan]: do we need empty map by default?
       values = new IntObjectHashMap<>();
     }
 
@@ -195,7 +195,7 @@ public final class LongAggregationsFacetRecorder implements FacetRecorder {
 
       LongValues values;
       for (int i = 0; i < longValues.length; i++) {
-        // TODO: cache advance/longValue results for current doc? Skipped for now as LongValues
+        // TODO [added to the plan]: cache advance/longValue results for current doc? Skipped for now as LongValues
         // themselves can keep the cache.
         values = longValues[i];
         if (values.advanceExact(docId)) {
